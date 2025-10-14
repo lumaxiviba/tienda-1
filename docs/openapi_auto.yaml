@@ -1,0 +1,258 @@
+openapi: 3.0.1
+info:
+  title: Mark-1 API
+  version: "1.1.1"
+  description: >
+    Documentación oficial de la API Mark-1.
+    Incluye autenticación JWT, gestión de productos, categorías e imágenes.
+servers:
+  - url: https://mark-1-bxwu.onrender.com
+    description: Servidor Render (producción)
+  - url: http://localhost:3000
+    description: Servidor local (desarrollo)
+
+paths:
+  /login:
+    post:
+      summary: Iniciar sesión de usuario
+      description: >
+        Verifica las credenciales del usuario y devuelve un token JWT con el rol del usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - usuario
+                - password
+              properties:
+                usuario:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: 1234
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                rol: "admin"
+        "400":
+          description: Faltan credenciales
+        "401":
+          description: Usuario o contraseña incorrectos
+        "500":
+          description: Error interno del servidor
+
+  /categorias:
+    get:
+      summary: Obtener todas las categorías
+      responses:
+        "200":
+          description: Lista de categorías
+
+  /categorias/{id}:
+    get:
+      summary: Obtener una categoría por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Categoría encontrada
+        "404":
+          description: Categoría no encontrada
+
+  /productos:
+    get:
+      summary: Obtener todos los productos
+      responses:
+        "200":
+          description: Lista de productos
+    post:
+      summary: Crear un nuevo producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: Producto de prueba
+                precio:
+                  type: number
+                  example: 9.99
+                categoria_id:
+                  type: integer
+                  example: 2
+      responses:
+        "200":
+          description: Producto creado correctamente
+        "400":
+          description: Faltan datos requeridos
+        "500":
+          description: Error interno del servidor
+
+  /productos/{id}:
+    get:
+      summary: Obtener producto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Producto encontrado
+        "404":
+          description: Producto no encontrado
+    put:
+      summary: Actualizar producto existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: Producto actualizado
+                precio:
+                  type: number
+                  example: 15.99
+      responses:
+        "200":
+          description: Producto actualizado correctamente
+        "404":
+          description: Producto no encontrado
+    delete:
+      summary: Eliminar producto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Producto eliminado
+        "404":
+          description: Producto no encontrado
+
+  /imagenes/{producto_id}:
+    get:
+      summary: Obtener imágenes por ID de producto
+      parameters:
+        - name: producto_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        "200":
+          description: Lista de imágenes del producto
+          content:
+            application/json:
+              example:
+                - id: 1
+                  url: "https://ejemplo.com/img1.png"
+                  producto_id: 5
+                - id: 2
+                  url: "https://ejemplo.com/img2.png"
+                  producto_id: 5
+        "500":
+          description: Error interno del servidor
+
+  /imagenes:
+    post:
+      summary: Subir una imagen (solo admin)
+      description: Inserta una nueva imagen asociada a un producto (requiere JWT).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+                - producto_id
+              properties:
+                url:
+                  type: string
+                  example: "https://mi-servidor.com/imagen.png"
+                producto_id:
+                  type: integer
+                  example: 3
+      responses:
+        "200":
+          description: Imagen creada correctamente
+          content:
+            application/json:
+              example:
+                id: 10
+                url: "https://mi-servidor.com/imagen.png"
+                producto_id: 3
+        "400":
+          description: Faltan datos requeridos
+        "401":
+          description: Token inválido o sin permisos
+        "500":
+          description: Error interno del servidor
+
+  /imagenes/{id}:
+    delete:
+      summary: Eliminar una imagen por ID (solo admin)
+      description: Elimina una imagen existente (requiere JWT válido).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 7
+      responses:
+        "200":
+          description: Imagen eliminada correctamente
+          content:
+            application/json:
+              example:
+                mensaje: "Imagen eliminada"
+        "404":
+          description: Imagen no encontrada
+        "401":
+          description: Token inválido o sin permisos
+        "500":
+          description: Error interno del servidor
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
