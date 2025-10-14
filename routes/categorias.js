@@ -14,6 +14,20 @@ router.get("/", async (_req, res) => {
   }
 });
 
+// GET /categorias/:id - público
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query("SELECT * FROM categorias WHERE id = $1", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Categoría no encontrada" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /categorias - admin
 router.post("/", verificarToken, verificarAdmin, async (req, res) => {
   const { nombre } = req.body;
