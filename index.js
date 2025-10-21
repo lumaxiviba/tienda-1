@@ -1,109 +1,26 @@
-require("dotenv").config();'use strict';
-
+require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const path = require("path");
 
-const cors = require("cors");var GetIntrinsic = require('get-intrinsic');
+const { verificarToken } = require("./routes/auth");
 
-const path = require("path");var callBound = require('call-bound');
-
-var inspect = require('object-inspect');
-
-const { verificarToken } = require("./routes/auth");var getSideChannelMap = require('side-channel-map');
-
-
-
-const app = express();var $TypeError = require('es-errors/type');
-
-var $WeakMap = GetIntrinsic('%WeakMap%', true);
+const app = express();
 
 // Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
 
-app.use(cors());/** @type {<K extends object, V>(thisArg: WeakMap<K, V>, key: K) => V} */
-
-app.use(express.json());var $weakMapGet = callBound('WeakMap.prototype.get', true);
-
-app.use(express.static('public'));/** @type {<K extends object, V>(thisArg: WeakMap<K, V>, key: K, value: V) => void} */
-
-var $weakMapSet = callBound('WeakMap.prototype.set', true);
-
-// Rutas/** @type {<K extends object, V>(thisArg: WeakMap<K, V>, key: K) => boolean} */
-
-app.use("/auth", require("./routes/auth"));var $weakMapHas = callBound('WeakMap.prototype.has', true);
-
-app.use("/categorias", require("./routes/categorias"));/** @type {<K extends object, V>(thisArg: WeakMap<K, V>, key: K) => boolean} */
-
-app.use("/imagenes", require("./routes/imagenes"));var $weakMapDelete = callBound('WeakMap.prototype.delete', true);
-
+// Rutas
+app.use("/auth", require("./routes/auth"));
+app.use("/categorias", require("./routes/categorias"));
+app.use("/imagenes", require("./routes/imagenes"));
 app.use("/productos", require("./routes/productos"));
 
-/** @type {import('.')} */
+// Puerto
+const PORT = process.env.PORT || 3000;
 
-// Puertomodule.exports = $WeakMap
-
-const PORT = process.env.PORT || 3000;	? /** @type {Exclude<import('.'), false>} */ function getSideChannelWeakMap() {
-
-		/** @typedef {ReturnType<typeof getSideChannelWeakMap>} Channel */
-
-app.listen(PORT, () => {		/** @typedef {Parameters<Channel['get']>[0]} K */
-
-  console.log(`Servidor corriendo en puerto ${PORT}`);		/** @typedef {Parameters<Channel['set']>[1]} V */
-
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });
-		/** @type {WeakMap<K & object, V> | undefined} */ var $wm;
-		/** @type {Channel | undefined} */ var $m;
-
-		/** @type {Channel} */
-		var channel = {
-			assert: function (key) {
-				if (!channel.has(key)) {
-					throw new $TypeError('Side channel does not contain ' + inspect(key));
-				}
-			},
-			'delete': function (key) {
-				if ($WeakMap && key && (typeof key === 'object' || typeof key === 'function')) {
-					if ($wm) {
-						return $weakMapDelete($wm, key);
-					}
-				} else if (getSideChannelMap) {
-					if ($m) {
-						return $m['delete'](key);
-					}
-				}
-				return false;
-			},
-			get: function (key) {
-				if ($WeakMap && key && (typeof key === 'object' || typeof key === 'function')) {
-					if ($wm) {
-						return $weakMapGet($wm, key);
-					}
-				}
-				return $m && $m.get(key);
-			},
-			has: function (key) {
-				if ($WeakMap && key && (typeof key === 'object' || typeof key === 'function')) {
-					if ($wm) {
-						return $weakMapHas($wm, key);
-					}
-				}
-				return !!$m && $m.has(key);
-			},
-			set: function (key, value) {
-				if ($WeakMap && key && (typeof key === 'object' || typeof key === 'function')) {
-					if (!$wm) {
-						$wm = new $WeakMap();
-					}
-					$weakMapSet($wm, key, value);
-				} else if (getSideChannelMap) {
-					if (!$m) {
-						$m = getSideChannelMap();
-					}
-					// eslint-disable-next-line no-extra-parens
-					/** @type {NonNullable<typeof $m>} */ ($m).set(key, value);
-				}
-			}
-		};
-
-		// @ts-expect-error TODO: figure out why this is erroring
-		return channel;
-	}
-	: getSideChannelMap;
