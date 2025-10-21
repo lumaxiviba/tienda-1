@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Rutas
-app.use("/auth", require("./routes/auth"));
+app.use("/auth", require("./routes/auth").router);
 app.use("/categorias", require("./routes/categorias"));
 app.use("/imagenes", require("./routes/imagenes"));
 app.use("/productos", require("./routes/productos"));

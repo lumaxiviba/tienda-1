@@ -42,6 +42,11 @@ router.post('/register', async (req, res) => {
   res.json({ message: "Register endpoint" });
 });
 
-module.exports = router;
-exports.verificarToken = verificarToken;
-exports.verificarAdmin = verificarAdmin;
+// Exportar el router y los middlewares
+const auth = {
+  router,
+  verificarToken,
+  verificarAdmin
+};
+
+module.exports = auth;

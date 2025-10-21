@@ -2,7 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-const { verificarToken, verificarAdmin } = require("./auth");
+const auth = require("./auth");
+const { verificarToken, verificarAdmin } = auth;
 
 // GET /categorias - público
 router.get("/", async (_req, res) => {
